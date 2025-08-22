@@ -2,7 +2,6 @@ from functools import partial
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QGridLayout, QSizePolicy
 from PyQt5.QtCore import pyqtSignal, Qt
 
-
 class LanguagePage(QWidget):
     language_selected = pyqtSignal(str)
     def __init__(self, languages = None):
@@ -37,23 +36,32 @@ class LanguagePage(QWidget):
                 QPushButton {{
                     font-size: 20px;
                     font-weight: bold;
-                    color: white;
                     text-align: center top;
-
-                    /* keep some gap above and reserve space below for the image */
-                    padding-top: 20px;
-                    padding-bottom: 36px;   /* <- tune this to move the image lower/higher */
-
-                    border: 2px solid #333;
+                    color: white;
+    
+                    /* text centered horizontally; vertical position via padding */
+                    padding-top: 20px;      /* space above text */
+                    padding-bottom: 36px;   /* reserves space below for the image */
+    
+                    border: 2px solid #333;   /* constant width → no jump */
                     border-radius: 6px;
-
+                    background-color: rgba(255,255,255,0.04);
+    
                     background-image: url("{url}");
                     background-repeat: no-repeat;
-                    background-position: center bottom;  /* image sits a bit lower */
                     background-origin: content;
-                    background-clip: content;
+                    background-position: center bottom;  /* image sits lower */
+                }}
+                QPushButton:hover {{
+                    border-color: #b0b0b0;                 /* visual cue only */
+                    background-color: rgba(255,255,255,0.08);
+                }}
+                QPushButton:pressed {{
+                    border-color: #888;
+                    background-color: rgba(255,255,255,0.12);
                 }}
             """)
+            b.setCursor(Qt.PointingHandCursor)
 
             b.clicked.connect(partial(self.language_selected.emit, name))
             g.addWidget(b, i // 3, i % 3)

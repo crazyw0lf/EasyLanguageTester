@@ -34,6 +34,10 @@ class MainWindow(QMainWindow):
         self.sizePage.size_selected.connect(self._on_size)
         self.modePage.mode_selected.connect(self._on_mode)
 
+        self.levelPage.back_requested.connect(lambda: self.stack.setCurrentWidget(self.langPage))
+        self.sizePage.back_requested.connect(lambda: self.stack.setCurrentWidget(self.levelPage))
+        self.modePage.back_requested.connect(lambda: self.stack.setCurrentWidget(self.sizePage))
+
     def _on_language(self, lang):
         self.language = lang
         self.stack.setCurrentWidget(self.levelPage)

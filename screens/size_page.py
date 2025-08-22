@@ -1,10 +1,11 @@
 from functools import partial
-
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QGridLayout, QSizePolicy
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtGui import QIcon, QCursor
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QGridLayout, QSizePolicy, QHBoxLayout
+from PyQt5.QtCore import Qt, pyqtSignal, QSize
 
 class SizePage(QWidget):
     size_selected = pyqtSignal(int)
+    back_requested = pyqtSignal()
     def __init__(self, sizes = None):
         super().__init__()
         if sizes is None:
@@ -13,6 +14,33 @@ class SizePage(QWidget):
         v = QVBoxLayout(self)
         v.setContentsMargins(24,24,24,24)
         v.setSpacing(16)
+
+        top = QHBoxLayout()
+        btn_back = QPushButton()
+        btn_back.setFixedSize(40,40)
+        btn_back.setIcon(QIcon("resources/back icon.png"))
+        btn_back.setIconSize(QSize(30,30))
+        btn_back.setToolTip("Back")
+        btn_back.setCursor(QCursor(Qt.PointingHandCursor))
+        btn_back.clicked.connect(self.back_requested.emit)
+
+        btn_back.setStyleSheet("""
+            QPushButton {
+                border: 1px solid #444;
+                border-radius: 8px;
+                background-color: rgba(255,255,255,0.04);
+            }
+            QPushButton:hover {
+                background-color: rgba(255,255,255,0.08);
+            }
+            QPushButton:pressed {
+                background-color: rgba(255,255,255,0.12);
+            }
+        """)
+
+        top.addWidget(btn_back)
+        top.addStretch(1)
+        v.addLayout(top)
 
         title = QLabel("Select Test Size")
         title.setAlignment(Qt.AlignCenter)
@@ -37,23 +65,32 @@ class SizePage(QWidget):
                 QPushButton {{
                     font-size: 20px;
                     font-weight: bold;
-                    color: white;
                     text-align: center top;
+                    color: white;
 
-                    /* keep some gap above and reserve space below for the image */
-                    padding-top: 100px;
-                    padding-bottom: 100px;   /* <- tune this to move the image lower/higher */
+                    /* text centered horizontally; vertical position via padding */
+                    padding-top: 20px;      /* space above text */
+                    padding-bottom: 36px;   /* reserves space below for the image */
 
-                    border: 2px solid #333;
+                    border: 2px solid #333;   /* constant width → no jump */
                     border-radius: 6px;
+                    background-color: rgba(255,255,255,0.04);
 
                     background-image: url("{url}");
                     background-repeat: no-repeat;
-                    background-position: center bottom;  /* image sits a bit lower */
                     background-origin: content;
-                    background-clip: content;
+                    background-position: center bottom;  /* image sits lower */
+                }}
+                QPushButton:hover {{
+                    border-color: #b0b0b0;                 /* visual cue only */
+                    background-color: rgba(255,255,255,0.08);
+                }}
+                QPushButton:pressed {{
+                    border-color: #888;
+                    background-color: rgba(255,255,255,0.12);
                 }}
             """)
+            b.setCursor(QCursor(Qt.PointingHandCursor))
             b.clicked.connect(partial(self.size_selected.emit, name))
             g.addWidget(b, 0, i % 3)
 
