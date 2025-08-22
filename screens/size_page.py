@@ -1,20 +1,20 @@
 from functools import partial
+
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QGridLayout, QSizePolicy
-from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 
-
-class LanguagePage(QWidget):
-    language_selected = pyqtSignal(str)
-    def __init__(self, languages = None):
+class SizePage(QWidget):
+    size_selected = pyqtSignal(int)
+    def __init__(self, sizes = None):
         super().__init__()
-        if languages is None:
-            languages = ["Spanish", "French", "German", "Chinese", "Japanese", "Italian"]
+        if sizes is None:
+            sizes = [10,20,30]
 
         v = QVBoxLayout(self)
         v.setContentsMargins(24,24,24,24)
         v.setSpacing(16)
 
-        title = QLabel("Select Language")
+        title = QLabel("Select Test Size")
         title.setAlignment(Qt.AlignCenter)
         title.setStyleSheet("font-size: 28px; font-weight: 600;")
         v.addWidget(title)
@@ -23,8 +23,8 @@ class LanguagePage(QWidget):
         g.setSpacing(24)
         v.addLayout(g,1)
 
-        for i, name in enumerate(languages):
-            b = QPushButton(name)
+        for i, name in enumerate(sizes):
+            b = QPushButton(f"{name} Questions")
             b.setMinimumHeight(56)
 
             sp = b.sizePolicy()
@@ -32,7 +32,7 @@ class LanguagePage(QWidget):
             sp.setVerticalPolicy(QSizePolicy.Expanding)
             b.setSizePolicy(sp)
 
-            url = "resources/" + f"{name.lower()}.png"
+            url = "resources/" + f"{name} questions mode.png"
             b.setStyleSheet(f"""
                 QPushButton {{
                     font-size: 20px;
@@ -41,8 +41,8 @@ class LanguagePage(QWidget):
                     text-align: center top;
 
                     /* keep some gap above and reserve space below for the image */
-                    padding-top: 20px;
-                    padding-bottom: 36px;   /* <- tune this to move the image lower/higher */
+                    padding-top: 100px;
+                    padding-bottom: 100px;   /* <- tune this to move the image lower/higher */
 
                     border: 2px solid #333;
                     border-radius: 6px;
@@ -54,11 +54,9 @@ class LanguagePage(QWidget):
                     background-clip: content;
                 }}
             """)
-
-            b.clicked.connect(partial(self.language_selected.emit, name))
-            g.addWidget(b, i // 3, i % 3)
+            b.clicked.connect(partial(self.size_selected.emit, name))
+            g.addWidget(b, 0, i % 3)
 
         for c in range(3):
             g.setColumnStretch(c,1)
-        for r in range(2):
-            g.setRowStretch(r,1)
+        g.setRowStretch(0,1)
