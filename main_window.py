@@ -1,9 +1,7 @@
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout,
                              QHBoxLayout, QLabel, QStackedWidget, QLineEdit)
-from screens.size_page import SizePage
-from screens.level_page import LevelPage
-from screens.language_page import LanguagePage
-from screens.mode_page import ModePage
+from screens.btn_choice_page import BtnChoicePage
+from styles.btn_styles import lang_page_style, level_page_style, size_page_style, mode_page_style
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -19,20 +17,25 @@ class MainWindow(QMainWindow):
         self.stack = QStackedWidget()
         layout.addWidget(self.stack)
 
-        self.langPage = LanguagePage()
-        self.levelPage = LevelPage()
-        self.sizePage = SizePage()
-        self.modePage = ModePage()
+
+        self.langPage = BtnChoicePage(["Spanish", "French", "German", "Chinese", "Japanese", "Italian"],
+                                      "Language",style = lang_page_style)
+        self.levelPage = BtnChoicePage(["A1", "A2", "B1", "B2", "C1", "C2"],
+                                       "Level", back_btn=True, style = level_page_style)
+        self.sizePage = BtnChoicePage(["10","20","30"], "Test Size", back_btn=True,
+                                      style = size_page_style)
+        self.modePage = BtnChoicePage(['Words and Grammar', 'Reading', 'Listening'], "Test Mode",
+                                      back_btn=True, style = mode_page_style)
 
         self.stack.addWidget(self.langPage)
         self.stack.addWidget(self.levelPage)
         self.stack.addWidget(self.sizePage)
         self.stack.addWidget(self.modePage)
 
-        self.langPage.language_selected.connect(self._on_language)
-        self.levelPage.level_selected.connect(self._on_level)
-        self.sizePage.size_selected.connect(self._on_size)
-        self.modePage.mode_selected.connect(self._on_mode)
+        self.langPage.info_selected.connect(self._on_language)
+        self.levelPage.info_selected.connect(self._on_level)
+        self.sizePage.info_selected.connect(self._on_size)
+        self.modePage.info_selected.connect(self._on_mode)
 
         self.levelPage.back_requested.connect(lambda: self.stack.setCurrentWidget(self.langPage))
         self.sizePage.back_requested.connect(lambda: self.stack.setCurrentWidget(self.levelPage))
