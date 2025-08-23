@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout,
                              QHBoxLayout, QLabel, QStackedWidget, QLineEdit)
 from screens.btn_choice_page import BtnChoicePage
 from styles.btn_styles import lang_page_style, level_page_style, size_page_style, mode_page_style
+from screens.result_page import ResultPage
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -32,6 +33,7 @@ class MainWindow(QMainWindow):
         self.stack.addWidget(self.sizePage)
         self.stack.addWidget(self.modePage)
 
+
         self.langPage.info_selected.connect(self._on_language)
         self.levelPage.info_selected.connect(self._on_level)
         self.sizePage.info_selected.connect(self._on_size)
@@ -40,6 +42,11 @@ class MainWindow(QMainWindow):
         self.levelPage.back_requested.connect(lambda: self.stack.setCurrentWidget(self.langPage))
         self.sizePage.back_requested.connect(lambda: self.stack.setCurrentWidget(self.levelPage))
         self.modePage.back_requested.connect(lambda: self.stack.setCurrentWidget(self.sizePage))
+
+        # test
+        self.resPage = ResultPage(90)
+        self.stack.addWidget(self.resPage)
+        self.stack.setCurrentWidget(self.resPage)
 
     def _on_language(self, lang):
         self.language = lang
@@ -52,4 +59,5 @@ class MainWindow(QMainWindow):
         self.stack.setCurrentWidget(self.modePage)
     def _on_mode(self, mode):
         self.mode = mode
+        self.stack.setCurrentWidget(self.resPage)
         print("Chosen:", self.language, self.level, self.size, self.mode)
