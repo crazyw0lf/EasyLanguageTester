@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout,
 from screens.btn_choice_page import BtnChoicePage
 from styles.btn_styles import lang_page_style, level_page_style, size_page_style, mode_page_style
 from screens.result_page import ResultPage
+from screens.waiting_page import WaitingPage
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -43,10 +44,10 @@ class MainWindow(QMainWindow):
         self.sizePage.back_requested.connect(lambda: self.stack.setCurrentWidget(self.levelPage))
         self.modePage.back_requested.connect(lambda: self.stack.setCurrentWidget(self.sizePage))
 
-        # test
-        self.resPage = ResultPage(90)
-        self.stack.addWidget(self.resPage)
-        self.stack.setCurrentWidget(self.resPage)
+        # demo
+        self.waitPage = WaitingPage()
+        self.stack.addWidget(self.waitPage)
+        self.stack.setCurrentWidget(self.waitPage)
 
     def _on_language(self, lang):
         self.language = lang
