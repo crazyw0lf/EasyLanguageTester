@@ -9,7 +9,12 @@ class WaitingPage(QWidget):
         super().__init__()
         self.labels = labels
         if self.labels is None:
-            self.labels = ["Generating your test", "This may take a moment", "Please wait"]
+            self.labels = ["Generating your test",
+                           "This may take a moment",
+                           "Please wait",
+                           "Wait a bit",
+                           "Loading",
+                           "Preparing questions"]
 
         v = QVBoxLayout(self)
         v.setAlignment(Qt.AlignCenter)
@@ -42,7 +47,9 @@ class WaitingPage(QWidget):
 
     def add_dot(self):
         if "..." in self.text:
-            self.text = random.choice(self.labels)
+            lbls = self.labels.copy()
+            lbls.remove(self.text[:-3])  # remove current text without dots
+            self.text = random.choice(lbls)
             self.label.setText(self.text)
         else:
             self.text += "."

@@ -4,6 +4,7 @@ from screens.btn_choice_page import BtnChoicePage
 from styles.btn_styles import lang_page_style, level_page_style, size_page_style, mode_page_style
 from screens.result_page import ResultPage
 from screens.waiting_page import WaitingPage
+from screens.test_question_page import QuestionPage, Qtyp
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -45,9 +46,10 @@ class MainWindow(QMainWindow):
         self.modePage.back_requested.connect(lambda: self.stack.setCurrentWidget(self.sizePage))
 
         # demo
-        self.waitPage = WaitingPage()
-        self.stack.addWidget(self.waitPage)
-        self.stack.setCurrentWidget(self.waitPage)
+        self.qPage = QuestionPage(Qtyp.medium, "What is the capital of France?",
+                              "Paris", ["London", "Berlin", "Madrid"])
+        self.stack.addWidget(self.qPage)
+        self.stack.setCurrentWidget(self.qPage)
 
     def _on_language(self, lang):
         self.language = lang
