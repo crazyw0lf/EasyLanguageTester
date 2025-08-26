@@ -93,7 +93,7 @@ mode_page_style = """
                     }}
                 """
 
-question_page_style = """
+confirm_btn_style = """
             QPushButton {
                 font-size: 20px;
                 font-weight: bold;
@@ -112,5 +112,30 @@ question_page_style = """
             QPushButton:hover:!disabled {
                 border-color: #b0b0b0;
                 background-color: rgba(82, 214, 113, 0.8);
+            }
+        """
+
+question_btn_style = """
+            QPushButton {
+                font-size: 20px;
+                font-weight: bold;
+                text-align: center top;
+                color: white;
+
+                /* text centered horizontally; vertical position via padding */
+                padding-top: 20px;      /* space above text */
+                padding-bottom: 36px;   /* reserves space below for the image */
+
+                border: 2px solid #333;   /* constant width → no jump */
+                border-radius: 6px;
+                background-color: rgba(255,255,255,0.04);
+            }
+            QPushButton:hover {
+                border-color: #b0b0b0;
+                background-color: rgba(255,255,255,0.2);
+            }
+            QPushButton:checked {
+                border-color: #b0b0b0;
+                background-color: rgba(255,255,255,0.1);
             }
         """

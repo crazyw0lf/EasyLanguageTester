@@ -4,7 +4,7 @@ from screens.btn_choice_page import BtnChoicePage
 from styles.btn_styles import lang_page_style, level_page_style, size_page_style, mode_page_style
 from screens.result_page import ResultPage
 from screens.waiting_page import WaitingPage
-from screens.test_question_page import QuestionPage, Qtyp
+from screens.test_question_page import QuestionPage, QuestionWaitPage, Qtyp
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -45,11 +45,29 @@ class MainWindow(QMainWindow):
         self.sizePage.back_requested.connect(lambda: self.stack.setCurrentWidget(self.levelPage))
         self.modePage.back_requested.connect(lambda: self.stack.setCurrentWidget(self.sizePage))
 
-        # demo
-        self.qPage = QuestionPage(Qtyp.medium, "What is the capital of France?",
-                              "Paris", ["London", "Berlin", "Madrid"])
-        self.stack.addWidget(self.qPage)
-        self.stack.setCurrentWidget(self.qPage)
+        self.test = {1:{"type": Qtyp.light, "question": "What is 2 + 2?", "right_answer": "4", "answers": ["3", "4", "5", "6"]},
+                     2:{"type": Qtyp.medium, "question": "What is the capital of France?","right_answer": "Paris" ,"answers": ["Berlin", "Madrid", "Paris", "Rome"]},
+                     3:{"type": Qtyp.hard, "question": "Solve the equation: 3x - 5 = 16", "right_answer": "7", "answers": []}}
+        self.cur_index = 1
+        self.score = 0
+        self.max_score = sum([int(self.test[i]["type"]) + 1 for i in self.test])
+        self.create_question()
+
+    def create_question(self):
+        self.prequestionPage = QuestionWaitPage(self.test[self.cur_index]["question"],2)
+        self.questionPage = QuestionPage(self.test[self.cur_index]["type"],
+                                         self.test[self.cur_index]["question"],
+                                         self.test[self.cur_index]["answers"])
+        self.stack.addWidget(self.prequestionPage)
+        self.stack.addWidget(self.questionPage)
+        self.stack.setCurrentWidget(self.prequestionPage)
+        self.prequestionPage.ready.connect(lambda: self.stack.setCurrentWidget(self.questionPage))
+        self.questionPage.answer_selected.connect(self._answer_selected)
+
+    def create_result(self):
+        self.resPage = ResultPage(int(self.score / self.max_score * 100))
+        self.stack.addWidget(self.resPage)
+        self.stack.setCurrentWidget(self.resPage)
 
     def _on_language(self, lang):
         self.language = lang
@@ -62,5 +80,13 @@ class MainWindow(QMainWindow):
         self.stack.setCurrentWidget(self.modePage)
     def _on_mode(self, mode):
         self.mode = mode
-        self.stack.setCurrentWidget(self.resPage)
-        print("Chosen:", self.language, self.level, self.size, self.mode)
+        self.start_test()
+    def _answer_selected(self, ans):
+        print("Selected answer:", ans)
+        if ans == self.test[self.cur_index]["right_answer"]:
+            self.score += int(self.test[self.cur_index]["type"]) + 1
+        if self.cur_index < len(self.test):
+            self.cur_index += 1
+            self.create_question()
+        else:
+            self.create_result()
