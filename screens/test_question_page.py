@@ -17,7 +17,7 @@ class Qtyp(IntEnum):
 class QuestionPage(QWidget):
     answer_selected = pyqtSignal(str)
 
-    def __init__(self, typ: Qtyp, question: str, answers: list = None):
+    def __init__(self, typ: Qtyp, question: str, answers: list = None, sec: int = 10):
         super().__init__()
         self.typ = typ
         self.question = question
@@ -48,6 +48,39 @@ class QuestionPage(QWidget):
         self.con_btn.setStyleSheet(confirm_btn_style)
         self.layout.addWidget(self.con_btn, alignment=Qt.AlignHCenter | Qt.AlignBottom)
 
+        self.progress_bar = QProgressBar()
+        self.progress_bar.setFixedHeight(30)
+        self.progress_bar.setRange(0, 100)
+        self.progress_bar.setStyleSheet("""
+                    QProgressBar {
+                        background-color: #949494;
+                        border: none;
+                        border-radius: 10px;
+                    }
+                    QProgressBar::chunk {
+                        background-color: #ffffff;
+                        border-radius: 10px;
+                    }
+                """)
+        self.progress_bar.setValue(0)
+        self.progress_bar.setTextVisible(False)
+        self.layout.addWidget(self.progress_bar)
+
+        self.timer = QTimer()
+        self.timer.setInterval(sec * 10)
+        self.timer.timeout.connect(self.update_progress)
+
+    def start_timer(self):
+        self.timer.start()
+
+    def update_progress(self):
+        current_value = self.progress_bar.value()
+        if current_value < 100:
+            self.progress_bar.setValue(current_value + 1)
+        else:
+            self.timer.stop()
+            self.answer_selected.emit("")
+
     def setup_question(self):
         if self.typ != Qtyp.hard:
             layout = QGridLayout()
@@ -59,7 +92,7 @@ class QuestionPage(QWidget):
                 btn.setCheckable(True)
                 btn.setChecked(False)
                 btn.setMinimumSize(100,100)
-                btn.setMaximumSize(300,300)
+                btn.setMaximumSize(500,500)
                 btn.setCursor(Qt.PointingHandCursor)
                 btn.setStyleSheet(question_btn_style)
                 sp = btn.sizePolicy()
@@ -95,6 +128,7 @@ class QuestionPage(QWidget):
 
     def _confirm_ans(self):
         self.answer_selected.emit(self.selected_answer)
+        self.timer.stop()
 
 
 class QuestionWaitPage(QWidget):

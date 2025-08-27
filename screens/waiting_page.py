@@ -5,16 +5,15 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel
 
 class WaitingPage(QWidget):
 
-    def __init__(self, labels=None):
+    def __init__(self, labels: list = None):
         super().__init__()
         self.labels = labels
         if self.labels is None:
-            self.labels = ["Generating your test",
-                           "This may take a moment",
+            self.labels = []
+        self.labels += ["This may take a moment",
                            "Please wait",
                            "Wait a bit",
-                           "Loading",
-                           "Preparing questions"]
+                           "Loading",]
 
         v = QVBoxLayout(self)
         v.setAlignment(Qt.AlignCenter)
