@@ -119,7 +119,7 @@ question_btn_style = """
             QPushButton {
                 font-size: 20px;
                 font-weight: bold;
-                text-align: center top;
+                text-align: center;
                 color: white;
 
                 /* text centered horizontally; vertical position via padding */

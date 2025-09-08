@@ -1,6 +1,6 @@
 from functools import partial
 
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QFontMetrics
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel,
                              QPushButton, QGridLayout, QSizePolicy,
                              QProgressBar, QLineEdit)
@@ -32,6 +32,7 @@ class QuestionPage(QWidget):
         self.setLayout(self.layout)
 
         self.qlabel = QLabel(self.question)
+        self.qlabel.setWordWrap(True)
         self.qlabel.setAlignment(Qt.AlignCenter)
         self.qlabel.setStyleSheet("font-size: 40px; font-weight: 500;")
         self.layout.addWidget(self.qlabel)
@@ -81,6 +82,24 @@ class QuestionPage(QWidget):
             self.timer.stop()
             self.answer_selected.emit("")
 
+    def wrap_text(self, text, font, max_width):
+        fm = QFontMetrics(font)
+        words = text.split()
+        lines, line = [], ""
+
+        for w in words:
+            test = w if line == "" else line + " " + w
+            if fm.horizontalAdvance(test) <= max_width:
+                line = test
+            else:
+                if line:  # push finished line
+                    lines.append(line)
+                line = w
+        if line:
+            lines.append(line)
+
+        return "\n".join(lines)
+
     def setup_question(self):
         if self.typ != Qtyp.hard:
             layout = QGridLayout()
@@ -88,17 +107,22 @@ class QuestionPage(QWidget):
             btn_labels = self.answers
 
             for i,btn_label in enumerate(btn_labels):
-                btn = QPushButton(btn_label)
+                btn = QPushButton()
                 btn.setCheckable(True)
                 btn.setChecked(False)
-                btn.setMinimumSize(100,100)
+                btn.setMinimumSize(150,150)
                 btn.setMaximumSize(500,500)
                 btn.setCursor(Qt.PointingHandCursor)
                 btn.setStyleSheet(question_btn_style)
+
+                wraped = self.wrap_text(btn_label, btn.font(), 200)
+                btn.setText(wraped)
+
                 sp = btn.sizePolicy()
                 sp.setHorizontalPolicy(QSizePolicy.Expanding)
                 sp.setVerticalPolicy(QSizePolicy.Expanding)
                 btn.setSizePolicy(sp)
+
                 btn.clicked.connect(partial(self._selected_ans_btn, btn))
                 layout.addWidget(btn,i//2,i%2)
             self.layout.addLayout(layout,1)
@@ -115,7 +139,7 @@ class QuestionPage(QWidget):
             self.layout.addWidget(input_area,1)
 
     def _selected_ans_btn(self, ans):
-        self.selected_answer = ans.text()
+        self.selected_answer = ans.text().replace('\n','')
         if self.selected_btn:
             self.selected_btn.setChecked(False)
         self.selected_btn = ans
@@ -142,6 +166,7 @@ class QuestionWaitPage(QWidget):
         self.setLayout(self.layout)
 
         self.label = QLabel(text)
+        self.label.setWordWrap(True)
         self.label.setAlignment(Qt.AlignCenter)
         self.label.setStyleSheet("font-size: 40px; font-weight: 500;")
         self.layout.addWidget(self.label)
