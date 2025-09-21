@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel,
                     QHBoxLayout)
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSignal, Qt, QSize
+import random
 
 class BtnChoicePage(QWidget):
     info_selected = pyqtSignal(str)

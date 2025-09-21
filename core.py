@@ -1,6 +1,7 @@
 import json
 from PyQt5.QtCore import QObject, pyqtSignal
 from groq import Groq
+from screens.test_question_page import Qtyp
 from dotenv import load_dotenv
 import random as r
 import os
@@ -14,27 +15,29 @@ class Core(QObject):
         super().__init__()
         self.owner = owner
 
-    def run(self, mode):
+    def run(self):
 
         try:
-            if mode == 'Words and Grammar':
-                creator = GramTest(self.owner)
-                creator.get_word_list()
-                if len(creator.word_list) < creator.size // 2:
-                    self.errored.emit("Failed to generate a sufficient vocabulary list. Please try different parameters.")
-                    return
+            creator = GramTest(self.owner)
+            creator.get_word_list()
+            if len(creator.word_list) < creator.size // 2:
+                self.errored.emit("Failed to generate a sufficient vocabulary list. Please try different parameters.")
+                return
 
-                creator.create_light_question()
-                creator.create_medium_question()
-                creator.create_hard_question()
+            creator.create_light_question()
+            creator.create_medium_question()
+            creator.create_hard_question()
 
-                if len(creator.test) < creator.size:
-                    self.errored.emit("Failed to generate a sufficient number of questions. Please try different parameters.")
-                    return
+            if len(creator.test) < creator.size:
+                self.errored.emit("Failed to generate a sufficient number of questions. Please try different parameters.")
+                return
 
-                creator.save_test()
+            for v in creator.test.values():
+                v['type'] = Qtyp[v['type']]
 
-                self.finished.emit(creator.test)
+            creator.save_test()
+
+            self.finished.emit(creator.test)
 
         except Exception as e:
             self.errored.emit(f"{type(e).__name__}: {e}")
@@ -68,7 +71,7 @@ class Core(QObject):
             "additionalProperties": False
         }
             prompt = f"""
-            You are a strict and objective evaluator of language tests.
+            You are a kind but objective evaluator of language tests.
             Your task is to assess the answers provided in a test and assign a score from 0 to 10 
             for each question based on the accuracy and completeness of the answers.
             As input you are given a JSON object representing the test results.

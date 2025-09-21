@@ -3,10 +3,11 @@ from functools import partial
 from PyQt5.QtGui import QFont, QFontMetrics
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel,
                              QPushButton, QGridLayout, QSizePolicy,
-                             QProgressBar, QLineEdit)
+                             QProgressBar, QLineEdit, QScrollArea)
 from PyQt5.QtCore import Qt, pyqtSignal, QTimer
 from enum import IntEnum
 from styles.btn_styles import confirm_btn_style, question_btn_style
+import random
 
 class Qtyp(IntEnum):
     light = 0
@@ -105,6 +106,7 @@ class QuestionPage(QWidget):
             layout = QGridLayout()
             layout.setSpacing(50)
             btn_labels = self.answers
+            random.shuffle(btn_labels)
 
             for i,btn_label in enumerate(btn_labels):
                 btn = QPushButton()
